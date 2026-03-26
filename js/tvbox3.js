@@ -10,10 +10,8 @@ var rule = {
     filterable: 1,
     play_parse: true,
     lazy: async (flag, url, input, parse) => {
-        // 拉取原始 m3u8
-        let raw = await request(url);
-        let clean = cleanM3U8(raw);
-        // 返回干净 m3u8
+        let raw = await request(url);       // 拉取原始 m3u8
+        let clean = cleanM3U8(raw);         // 过滤广告
         return {parse: 0, url: 'data:application/vnd.apple.mpegurl;base64,' + base64Encode(clean)};
     },
     parse: async (json) => {
@@ -59,7 +57,6 @@ function cleanM3U8(m3u8Text) {
         } else if (line.endsWith(".ts")) {
             buffer[buffer.length - 1].ts = line;
         } else {
-            // 检查广告模式：连续 7 段 (6x4s + 1x2s)
             if (buffer.length === 7) {
                 const durations = buffer.map(b => b.duration);
                 const isAd = durations.slice(0,6).every(d => Math.abs(d-4.0)<0.01) &&
@@ -69,7 +66,6 @@ function cleanM3U8(m3u8Text) {
                     continue;
                 }
             }
-            // 写入非广告片段
             for (let b of buffer) {
                 clean.push(b.line);
                 clean.push(b.ts);
@@ -81,7 +77,6 @@ function cleanM3U8(m3u8Text) {
     return clean.join("\n");
 }
 
-// Base64 编码函数
 function base64Encode(str) {
     return java.lang.String(str).getBytes("UTF-8").toString("base64");
 }
