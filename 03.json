@@ -1,9 +1,11 @@
-{
+[
+  {
     "key": "lzzy_adfree",
     "name": "量子资源网去广告",
     "type": 3,
-    "api": "https://raw.githubusercontent.com/TW20022/homevideo/refs/heads/main/js/tvbox2.js",
+    "api": "https://raw.githubusercontent.com/TW20022/homevideo/refs/heads/main/js/tvbox3.js",
     "searchable": 1,
     "quickSearch": 1,
     "filterable": 1
-}
+  }
+]
