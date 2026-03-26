@@ -1,9 +1,9 @@
 [
   {
     "key": "lzzy",
-    "name": "量子资源去广告",
+    "name": "量子资源网",
     "type": 1,
-    "api": "https://raw.githubusercontent.com/TW20022/homevideo/refs/heads/main/js/lz.js",
+    "api": "https://cj.lziapi.com/api.php/provide/vod/at/xml/",
     "searchable": 1,
     "quickSearch": 1,
     "filterable": 0
