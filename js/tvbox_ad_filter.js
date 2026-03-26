@@ -1,36 +1,34 @@
-// tvbox_ad_filter.js
-// 资源接口：量子资源网 (lzm3u8)
-// 自动过滤广告段落：连续 7 个片段 (6x4s + 1x2s)
-
 var rule = {
     title: '量子资源网去广告',
     host: 'https://cj.lziapi.com',
-    homeUrl: '/api.php/provide/vod/from/lzm3u8/at/xml/',
-    url: '/api.php/provide/vod/from/lzm3u8/at/xml/?ac=detail&id=fyid',
-    searchUrl: '/api.php/provide/vod/from/lzm3u8/at/xml/?wd=**&ac=detail',
-    searchable: 2,
-    quickSearch: 0,
-    filterable: 0,
+    homeUrl: '/api.php/provide/vod/at/json',
+    url: '/api.php/provide/vod/at/json?ac=detail&id=fyid',
+    searchUrl: '/api.php/provide/vod/at/json?wd=**&ac=detail',
+    listUrl: '/api.php/provide/vod/at/json?ac=detail&t=fyclass&page=fypage',
+    searchable: 1,
+    quickSearch: 1,
+    filterable: 1,
     play_parse: true,
     lazy: async (flag, url, input, parse) => {
         // 拉取原始 m3u8
         let raw = await request(url);
         let clean = cleanM3U8(raw);
-        // 返回干净 m3u8，直接给播放器
+        // 返回干净 m3u8
         return {parse: 0, url: 'data:application/vnd.apple.mpegurl;base64,' + base64Encode(clean)};
     },
-    parse: async (html) => {
+    parse: async (json) => {
         let list = [];
-        let doc = new DOMParser().parseFromString(html, 'text/xml');
-        let videos = doc.querySelectorAll('video');
-        videos.forEach(v => {
-            list.push({
-                vod_id: v.querySelector('id').textContent,
-                vod_name: v.querySelector('name').textContent,
-                vod_pic: '',
-                vod_remarks: v.querySelector('note').textContent
+        let data = JSON.parse(json);
+        if (data.list) {
+            data.list.forEach(v => {
+                list.push({
+                    vod_id: v.vod_id,
+                    vod_name: v.vod_name,
+                    vod_pic: v.vod_pic || '',
+                    vod_remarks: v.vod_remarks || ''
+                });
             });
-        });
+        }
         return list;
     }
 };
@@ -48,7 +46,7 @@ function cleanM3U8(m3u8Text) {
         } else if (line.endsWith(".ts")) {
             buffer[buffer.length - 1].ts = line;
         } else {
-            // 检查广告模式
+            // 检查广告模式：连续 7 段 (6x4s + 1x2s)
             if (buffer.length === 7) {
                 const durations = buffer.map(b => b.duration);
                 const isAd = durations.slice(0,6).every(d => Math.abs(d-4.0)<0.01) &&
