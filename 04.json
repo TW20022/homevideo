@@ -1,0 +1,11 @@
+[
+  {
+    "key": "lzzy_adfree",
+    "name": "量子资源网去广告",
+    "type": 3,
+    "api": "https://fastly.jsdelivr.net/gh/TW20022/homevideo@main/tvbox4.js", 
+    "searchable": 1,
+    "quickSearch": 1,
+    "filterable": 1
+  }
+]
