@@ -1,9 +1,11 @@
-{
-  "key": "lzzy",
-  "name": "量子资源去广告",
-  "type": 3,
-  "api": "https://raw.githubusercontent.com/TW20022/homevideo/refs/heads/main/js/lz.js",
-  "searchable": 1,
-  "quickSearch": 1,
-  "filterable": 0
-}
+[
+  {
+    "key": "lzzy",
+    "name": "量子资源去广告",
+    "type": 1,
+    "api": "https://raw.githubusercontent.com/TW20022/homevideo/refs/heads/main/js/lz.js",
+    "searchable": 1,
+    "quickSearch": 1,
+    "filterable": 0
+  }
+]
