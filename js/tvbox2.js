@@ -30,6 +30,19 @@ var rule = {
             });
         }
         return list;
+    },
+    class_parse: async (json) => {
+        let classes = [];
+        let data = JSON.parse(json);
+        if (data.class) {
+            data.class.forEach(c => {
+                classes.push({
+                    type_id: c.type_id,
+                    type_name: c.type_name
+                });
+            });
+        }
+        return classes;
     }
 };
 
