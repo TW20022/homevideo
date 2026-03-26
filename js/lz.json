@@ -1,0 +1,76 @@
+// tvbox_ad_filter.js
+// 资源接口：量子资源网 (lzm3u8)
+// 自动过滤广告段落：连续 7 个片段 (6x4s + 1x2s)
+
+var rule = {
+    title: '量子资源网去广告',
+    host: 'https://cj.lziapi.com',
+    homeUrl: '/api.php/provide/vod/from/lzm3u8/at/xml/',
+    url: '/api.php/provide/vod/from/lzm3u8/at/xml/?ac=detail&id=fyid',
+    searchUrl: '/api.php/provide/vod/from/lzm3u8/at/xml/?wd=**&ac=detail',
+    searchable: 2,
+    quickSearch: 0,
+    filterable: 0,
+    play_parse: true,
+    lazy: async (flag, url, input, parse) => {
+        // 拉取原始 m3u8
+        let raw = await request(url);
+        let clean = cleanM3U8(raw);
+        // 返回干净 m3u8，直接给播放器
+        return {parse: 0, url: 'data:application/vnd.apple.mpegurl;base64,' + base64Encode(clean)};
+    },
+    parse: async (html) => {
+        let list = [];
+        let doc = new DOMParser().parseFromString(html, 'text/xml');
+        let videos = doc.querySelectorAll('video');
+        videos.forEach(v => {
+            list.push({
+                vod_id: v.querySelector('id').textContent,
+                vod_name: v.querySelector('name').textContent,
+                vod_pic: '',
+                vod_remarks: v.querySelector('note').textContent
+            });
+        });
+        return list;
+    }
+};
+
+// 广告过滤函数
+function cleanM3U8(m3u8Text) {
+    const lines = m3u8Text.split("\n");
+    let clean = [];
+    let buffer = [];
+
+    for (let line of lines) {
+        if (line.startsWith("#EXTINF:")) {
+            const duration = parseFloat(line.replace("#EXTINF:", "").replace(",", ""));
+            buffer.push({line, duration});
+        } else if (line.endsWith(".ts")) {
+            buffer[buffer.length - 1].ts = line;
+        } else {
+            // 检查广告模式
+            if (buffer.length === 7) {
+                const durations = buffer.map(b => b.duration);
+                const isAd = durations.slice(0,6).every(d => Math.abs(d-4.0)<0.01) &&
+                             Math.abs(durations[6]-2.0)<0.01;
+                if (isAd) {
+                    buffer = []; // 丢弃广告
+                    continue;
+                }
+            }
+            // 写入非广告片段
+            for (let b of buffer) {
+                clean.push(b.line);
+                clean.push(b.ts);
+            }
+            buffer = [];
+            clean.push(line);
+        }
+    }
+    return clean.join("\n");
+}
+
+// Base64 编码函数
+function base64Encode(str) {
+    return java.lang.String(str).getBytes("UTF-8").toString("base64");
+}
