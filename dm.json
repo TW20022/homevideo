@@ -6,7 +6,7 @@
             "key": "lzzy",
             "name": "量子资源",
             "type": 3,
-            "api": "./js/danmaku.js",
+            "api": "https://raw.githubusercontent.com/TW20022/homevideo/refs/heads/main/js/danmaku.js",
             "searchable": 1,
             "quickSearch": 1,
             "filterable": 1,
@@ -166,9 +166,7 @@
             "name": "江苏移动",
             "url": "http://192.168.50.3/lives.txt",
             "playerType": 1,
-            "epg": "http://epg.51zmt.top:8000/api/diyp/?ch={name}&date={date}",
-            "catchup": "append",
-            "catchup-source": "?playseek={b}-{e}"
+            "epg": "http://epg.51zmt.top:8000/api/diyp/?ch={name}&date={date}"
         }
     ]
 }
