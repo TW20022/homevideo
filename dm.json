@@ -6,7 +6,7 @@
             "key": "lzzy",
             "name": "量子资源",
             "type": 3,
-            "api": "https://raw.githubusercontent.com/TW20022/homevideo/refs/heads/main/js/danmaku.js",
+            "api": "https://cdn.jsdelivr.net/gh/TW20022/homevideo@main/js/danmaku.js",
             "searchable": 1,
             "quickSearch": 1,
             "filterable": 1,
